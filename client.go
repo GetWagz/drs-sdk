@@ -1,4 +1,5 @@
 // Package drs provides a very basic and simple API for working with V2 of the Amazon Dash Replenishment Services
+// For more information, check the README file at https://github.com/kevineaton/drs-sdk
 package drs
 
 import (
@@ -58,6 +59,20 @@ var endpoints = map[string]endpoint{
 				}
 			}
 		 }`,
+	},
+	"deregister": endpoint{
+		Path: "/registration",
+		Headers: []endpointHeader{
+			endpointHeader{
+				Header: "x-amzn-accept-type",
+				Value:  "com.amazon.dash.replenishment.DrsDeregisterResult@1.0",
+			},
+			endpointHeader{
+				Header: "x-amzn-type-version",
+				Value:  "com.amazon.dash.replenishment.DrsDeregisterInput@2.0",
+			},
+		},
+		MockGood: "",
 	},
 }
 

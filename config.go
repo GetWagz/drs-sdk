@@ -20,14 +20,14 @@ func ConfigSetup() *ConfigStruct {
 	//a big change as of Jan 2018: Version is included in the URL, so no string generation is needed in the calls
 	c := new(ConfigStruct)
 
-	c.Environment = strings.ToLower(os.Getenv("ENV"))
+	c.Environment = strings.ToLower(os.Getenv("DRS_SDK_ENV"))
 	if c.Environment == "prod" || c.Environment == "production" {
 		c.Environment = "production"
 	} else if c.Environment == "" || c.Environment == "dev" || c.Environment == "development" {
 		c.Environment = "dev"
 	}
 
-	c.RootURL = strings.ToLower(os.Getenv("ROOT_URL"))
+	c.RootURL = strings.ToLower(os.Getenv("DRS_SDK_ROOT_URL"))
 	if c.RootURL == "" {
 		//we set to the default as of 20180224
 		c.RootURL = "https://dash-replenishment-service-na.amazon.com/"
