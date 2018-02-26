@@ -1,5 +1,6 @@
 package drs
 
+// DeregisterUser sends a request to DRS requesting that the user is deregistered from the service
 func DeregisterUser(userToken string) (bool, *APIError) {
 	if userToken == "" {
 		err := APIError{

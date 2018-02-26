@@ -48,9 +48,9 @@ Pull Requests are welcome! See our `CONTRIBUTING.md` file for more information.
 
 [X] Deregistration [API Docs](https://developer.amazon.com/docs/dash/deregistration-endpoint.html)
 
-[ ] Slot Status [API Docs](https://developer.amazon.com/docs/dash/slotstatus-endpoint.html)
+[X] Device Status [API Docs](https://developer.amazon.com/docs/dash/devicestatus-endpoint.html)
 
-[ ] Device Status [API Docs](https://developer.amazon.com/docs/dash/devicestatus-endpoint.html)
+[ ] Slot Status [API Docs](https://developer.amazon.com/docs/dash/slotstatus-endpoint.html)
 
 [ ] Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-endpoint.html)
 
