@@ -74,6 +74,20 @@ var endpoints = map[string]endpoint{
 		},
 		MockGood: "",
 	},
+	"deviceStatus": endpoint{
+		Path: "/deviceStatus",
+		Headers: []endpointHeader{
+			endpointHeader{
+				Header: "x-amzn-accept-type",
+				Value:  "com.amazon.dash.replenishment.DrsDeviceStatusResult@1.0",
+			},
+			endpointHeader{
+				Header: "x-amzn-type-version",
+				Value:  "com.amazon.dash.replenishment.DrsDeviceStatusInput@1.0",
+			},
+		},
+		MockGood: "",
+	},
 }
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
