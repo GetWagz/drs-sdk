@@ -22,13 +22,13 @@ type ProductInfoListItem struct {
 	Unit     string `json:"unit"`
 }
 
-// GetUserSubscriptionInfo gets the user subscription information from DRS
-func GetUserSubscriptionInfo(userToken string) (*SubscriptionInfo, *APIError) {
-	if userToken == "" {
+// GetSubscriptionInfo gets the subscription information from DRS for the passed in device token
+func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
+	if deviceToken == "" {
 		err := APIError{
 			Code: 400,
 			Data: map[string]string{
-				"message": "userToken cannot be blank",
+				"message": "deviceToken cannot be blank",
 			},
 		}
 		return nil, &err
@@ -38,7 +38,7 @@ func GetUserSubscriptionInfo(userToken string) (*SubscriptionInfo, *APIError) {
 		Slots: map[string]Slot{},
 	}
 
-	code, body, err := makeCall("GET", "subscriptionInfo", userToken, map[string]string{})
+	code, body, err := makeCall("GET", "subscriptionInfo", deviceToken, map[string]string{})
 	if err != nil {
 		return nil, err
 	}

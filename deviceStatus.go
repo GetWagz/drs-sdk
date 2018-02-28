@@ -7,12 +7,12 @@ import (
 // UpdateDeviceStatus updates the device status. According to the docs, you will want to call this at least once every 24 hours.
 //
 // If lastStatus is an empty string, we will replace it with the current timestamp in ISO8601
-func UpdateDeviceStatus(userToken string, lastStatus string) (bool, *APIError) {
-	if userToken == "" {
+func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, *APIError) {
+	if deviceToken == "" {
 		err := APIError{
 			Code: 400,
 			Data: map[string]string{
-				"message": "userToken cannot be blank",
+				"message": "deviceToken cannot be blank",
 			},
 		}
 		return false, &err
@@ -34,7 +34,7 @@ func UpdateDeviceStatus(userToken string, lastStatus string) (bool, *APIError) {
 		}
 	}
 
-	code, _, err := makeCall("POST", "deviceStatus", userToken, map[string]string{
+	code, _, err := makeCall("POST", "deviceStatus", deviceToken, map[string]string{
 		"mostRecentlyActiveDate": lastStatus,
 	})
 	if err != nil {

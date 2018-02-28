@@ -17,7 +17,6 @@ type ConfigStruct struct {
 
 //ConfigSetup sets up the config struct with data from the environment
 func ConfigSetup() *ConfigStruct {
-	//a big change as of Jan 2018: Version is included in the URL, so no string generation is needed in the calls
 	c := new(ConfigStruct)
 
 	c.Environment = strings.ToLower(os.Getenv("DRS_SDK_ENV"))
@@ -38,7 +37,6 @@ func ConfigSetup() *ConfigStruct {
 
 	Config = c
 
-	//setup now
 	return c
 }
 

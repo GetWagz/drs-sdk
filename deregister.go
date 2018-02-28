@@ -1,18 +1,18 @@
 package drs
 
-// DeregisterUser sends a request to DRS requesting that the user is deregistered from the service
-func DeregisterUser(userToken string) (bool, *APIError) {
-	if userToken == "" {
+// DeregisterDevice sends a request to DRS requesting that the device is deregistered from the service
+func DeregisterDevice(deviceToken string) (bool, *APIError) {
+	if deviceToken == "" {
 		err := APIError{
 			Code: 400,
 			Data: map[string]string{
-				"message": "userToken cannot be blank",
+				"message": "deviceToken cannot be blank",
 			},
 		}
 		return false, &err
 	}
 
-	code, _, err := makeCall("DELETE", "deregister", userToken, map[string]string{})
+	code, _, err := makeCall("DELETE", "deregister", deviceToken, map[string]string{})
 	if err != nil {
 		return false, err
 	}

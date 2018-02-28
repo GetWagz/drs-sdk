@@ -7,9 +7,9 @@ import (
 
 func TestDeregistering(t *testing.T) {
 	ConfigSetup()
-	_, err := DeregisterUser("")
+	_, err := DeregisterDevice("")
 	assert.NotNil(t, err)
-	result, err := DeregisterUser("TEST")
+	result, err := DeregisterDevice("TEST")
 	assert.Nil(t, err)
 	assert.True(t, result)
 }

@@ -91,7 +91,7 @@ var endpoints = map[string]endpoint{
 }
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
-func makeCall(method, endpoint string, userAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
+func makeCall(method, endpoint string, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
 	//clean up the url and endpoint
 	err = &APIError{}
 	if strings.HasPrefix(endpoint, "/") {
@@ -108,7 +108,7 @@ func makeCall(method, endpoint string, userAuth string, data interface{}) (statu
 	}
 
 	//if the userAuth is passed in as TEST, we just send mock data back
-	if userAuth == "TEST" {
+	if deviceAuth == "TEST" {
 		json.Unmarshal([]byte(end.MockGood), &responseData)
 
 		return 200, responseData, nil
@@ -128,7 +128,7 @@ func makeCall(method, endpoint string, userAuth string, data interface{}) (statu
 
 	request := resty.R().
 		SetHeader("Accept", "application/json").
-		SetAuthToken(userAuth)
+		SetAuthToken(deviceAuth)
 
 	//loop over the headers and add them in
 	for index := range end.Headers {

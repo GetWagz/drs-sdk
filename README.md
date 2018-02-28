@@ -22,11 +22,13 @@ First, there are some optional environment variables (with *hopefully* sane defa
 
 `DRS_SDK_ROOT_URL` is the root URL for the DRS service, defaults to `https://dash-replenishment-service-na.amazon.com/`
 
+Most calls require at a minimum the `deviceToken` which is the access token for the device obtained from Login With Amazon / DRS. The scope needed is `dash:replenish`. Refreshing this token is not the responsibility of this library.
+
 ## Testing
 
 Testing can be tricky, as you don't want to make actual network calls with user data. Therefore, in the `client.go` file where we setup the supported endpoints, we also have a `MockGood` field which holds JSON of what the call should return based upon the V2 docs found [here](https://developer.amazon.com/docs/dash/replenishment-service.html).
 
-When testing, if the user auth token is set to `TEST`, the mock data will be used instead.
+When testing, if the auth token is set to `TEST`, the mock data will be used instead.
 
 Since we are mocking the calls, some of the code is tougher to test, so code coverage will likely never be 100%.
 
