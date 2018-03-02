@@ -1,6 +1,7 @@
 package drs
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
@@ -47,7 +48,7 @@ func init() {
 }
 
 //log provides structured logging through logrus. We support info, warning, and error
-func log(level, key, message string, data interface{}) {
+func log(level, key, message string, data interface{}) string {
 	if Config.Environment != "production" {
 		level = strings.ToLower(level)
 
@@ -64,5 +65,7 @@ func log(level, key, message string, data interface{}) {
 		case "error":
 			logrus.WithFields(fields).Error(message)
 		}
+		return fmt.Sprintf("%s: %s", strings.ToUpper(level), key)
 	}
+	return ""
 }

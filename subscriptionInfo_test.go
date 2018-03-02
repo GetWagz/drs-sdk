@@ -17,4 +17,8 @@ func TestGettingTheUserSubscription(t *testing.T) {
 	assert.Equal(t, 1, info.Slots["slot1"].ProductInfoList[0].Quantity)
 	assert.Equal(t, "count", info.Slots["slot1"].ProductInfoList[0].Unit)
 
+	info, err = GetSubscriptionInfo("AFakeAuthBearer")
+	assert.Nil(t, info)
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Code, 400)
 }

@@ -19,4 +19,8 @@ func TestDeviceStatus(t *testing.T) {
 	result, err = UpdateDeviceStatus("TEST", "2008-01-01T17:08:00Z")
 	assert.Nil(t, err)
 	assert.True(t, result)
+
+	result, err = UpdateDeviceStatus("TEST", "")
+	assert.Nil(t, err)
+	assert.True(t, result)
 }
