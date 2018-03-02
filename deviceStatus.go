@@ -37,10 +37,7 @@ func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, *APIError)
 	code, _, err := makeCall("deviceStatus", nil, deviceToken, map[string]string{
 		"mostRecentlyActiveDate": lastStatus,
 	})
-	if err != nil {
-		return false, err
-	}
-	if code != 200 {
+	if err != nil || code != 200 {
 		return false, err
 	}
 

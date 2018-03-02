@@ -40,7 +40,7 @@ For coverage in HTML format, run
 
 `go test -coverprofile=coverage.out && go tool cover -html=coverage.out`
 
-The coverage is notably low, which may cause concerns. However, most of the uncovered calls would be calls directly to Amazon, which we cannot easily mock in success conditions.
+The coverage is notably low, which may cause concerns. However, most of the uncovered calls would be calls directly to Amazon, which we cannot easily mock in success conditions that are malformed. Feel free to check the results of the coverage report to see what exactly isn't covered and make a determination if that is acceptable to you. This library is currently being used in production.
 
 ## Contributing
 

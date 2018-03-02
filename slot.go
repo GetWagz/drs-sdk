@@ -62,10 +62,7 @@ func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bo
 	status.LastUseDate = lastParsed.Format(time.RFC3339)
 
 	code, _, err := makeCall("slotStatus", []interface{}{slotID}, deviceToken, status)
-	if err != nil {
-		return false, err
-	}
-	if code != 200 {
+	if err != nil || code != 200 {
 		return false, err
 	}
 

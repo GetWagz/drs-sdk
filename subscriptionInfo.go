@@ -39,10 +39,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 	}
 
 	code, body, err := makeCall("subscriptionInfo", nil, deviceToken, map[string]string{})
-	if err != nil {
-		return nil, err
-	}
-	if code != 200 {
+	if err != nil || code != 200 {
 		return nil, err
 	}
 
