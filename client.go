@@ -61,7 +61,7 @@ var endpoints = map[string]endpoint{
 		 }`,
 	},
 	"deregister": endpoint{
-		Path: "/registration",
+		Path: "registration",
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -75,7 +75,7 @@ var endpoints = map[string]endpoint{
 		MockGood: "",
 	},
 	"deviceStatus": endpoint{
-		Path: "/deviceStatus",
+		Path: "deviceStatus/%s",
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -88,10 +88,28 @@ var endpoints = map[string]endpoint{
 		},
 		MockGood: "",
 	},
+	"replenishSlot": endpoint{
+		Path: "replenish/%s",
+		Headers: []endpointHeader{
+			endpointHeader{
+				Header: "x-amzn-accept-type",
+				Value:  "com.amazon.dash.replenishment.DrsReplenishResult@1.0",
+			},
+			endpointHeader{
+				Header: "x-amzn-type-version",
+				Value:  "com.amazon.dash.replenishment.DrsReplenishInput@1.0",
+			},
+		},
+		MockGood: `{
+			"eventInstanceId" : "SOME_EVENT_INSTANCE",
+			"detailCode" : "STANDARD_ORDER_PLACED"
+			}`,
+	},
 }
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
-func makeCall(method, endpoint string, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
+//I really want to look at replace the pathParams in a sane way
+func makeCall(method, endpoint string, pathParams []interface{}, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
 	//clean up the url and endpoint
 	err = &APIError{}
 	if strings.HasPrefix(endpoint, "/") {
@@ -115,6 +133,12 @@ func makeCall(method, endpoint string, deviceAuth string, data interface{}) (sta
 	}
 
 	url := fmt.Sprintf("%s%s", Config.RootURL, end.Path)
+	//some endpoints take path parameters, so we need to do a quick replace here
+	//this could probably be more elegant
+	if len(pathParams) > 0 && pathParams != nil {
+		url = fmt.Sprintf(url, pathParams...)
+	}
+
 	method = strings.ToLower(method)
 	if method != "get" && method != "post" && method != "delete" && method != "put" && method != "patch" {
 		err.Code = 400
