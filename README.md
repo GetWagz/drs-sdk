@@ -54,8 +54,8 @@ Pull Requests are welcome! See our `CONTRIBUTING.md` file for more information.
 
 [ ] Slot Status [API Docs](https://developer.amazon.com/docs/dash/slotstatus-endpoint.html)
 
-[ ] Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-endpoint.html)
+[X] Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-endpoint.html)
 
-[ ] Replenish [API Docs](https://developer.amazon.com/docs/dash/replenish-endpoint.html)
+[X] Replenish [API Docs](https://developer.amazon.com/docs/dash/replenish-endpoint.html)
 
-[ ] Cancel Test Order [API Docs](https://developer.amazon.com/docs/dash/canceltestorder-endpoint.html)
+[X] Cancel Test Order [API Docs](https://developer.amazon.com/docs/dash/canceltestorder-endpoint.html)
