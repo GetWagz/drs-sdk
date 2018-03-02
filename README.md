@@ -26,7 +26,7 @@ Most calls require at a minimum the `deviceToken` which is the access token for 
 
 ## Testing
 
-Testing can be tricky, as you don't want to make actual network calls with user data. Therefore, in the `client.go` file where we setup the supported endpoints, we also have a `MockGood` field which holds JSON of what the call should return based upon the V2 docs found [here](https://developer.amazon.com/docs/dash/replenishment-service.html).
+Testing can be tricky, as you don't want to make actual network calls with user data. Therefore, in the `endpoints.go` file where we setup the supported endpoints, we also have a `MockGood` field which holds JSON of what the call should return based upon the V2 docs found [here](https://developer.amazon.com/docs/dash/replenishment-service.html).
 
 When testing, if the auth token is set to `TEST`, the mock data will be used instead.
 
@@ -40,22 +40,24 @@ For coverage in HTML format, run
 
 `go test -coverprofile=coverage.out && go tool cover -html=coverage.out`
 
+The coverage is notably low, which may cause concerns. However, most of the uncovered calls would be calls directly to Amazon, which we cannot easily mock in success conditions.
+
 ## Contributing
 
 Pull Requests are welcome! See our `CONTRIBUTING.md` file for more information.
 
-## Roadmap
+## Endpoints Implemented
 
-[X] Subscription Info [API Docs](https://developer.amazon.com/docs/dash/getsubscriptioninfo-endpoint.html)
+Subscription Info [API Docs](https://developer.amazon.com/docs/dash/getsubscriptioninfo-endpoint.html)
 
-[X] Deregistration [API Docs](https://developer.amazon.com/docs/dash/deregistration-endpoint.html)
+Deregistration [API Docs](https://developer.amazon.com/docs/dash/deregistration-endpoint.html)
 
-[X] Device Status [API Docs](https://developer.amazon.com/docs/dash/devicestatus-endpoint.html)
+Device Status [API Docs](https://developer.amazon.com/docs/dash/devicestatus-endpoint.html)
 
-[ ] Slot Status [API Docs](https://developer.amazon.com/docs/dash/slotstatus-endpoint.html)
+Slot Status [API Docs](https://developer.amazon.com/docs/dash/slotstatus-endpoint.html)
 
-[X] Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-endpoint.html)
+Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-endpoint.html)
 
-[X] Replenish [API Docs](https://developer.amazon.com/docs/dash/replenish-endpoint.html)
+Replenish [API Docs](https://developer.amazon.com/docs/dash/replenish-endpoint.html)
 
-[X] Cancel Test Order [API Docs](https://developer.amazon.com/docs/dash/canceltestorder-endpoint.html)
+Cancel Test Order [API Docs](https://developer.amazon.com/docs/dash/canceltestorder-endpoint.html)

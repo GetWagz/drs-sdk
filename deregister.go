@@ -12,11 +12,8 @@ func DeregisterDevice(deviceToken string) (bool, *APIError) {
 		return false, &err
 	}
 
-	code, _, err := makeCall("DELETE", "deregister", nil, deviceToken, map[string]string{})
-	if err != nil {
-		return false, err
-	}
-	if code != 200 {
+	code, _, err := makeCall("deregister", nil, deviceToken, map[string]string{})
+	if err != nil || code != 200 {
 		return false, err
 	}
 

@@ -26,7 +26,7 @@ func CancelTestOrder(deviceToken, slotID string) (*SlotOrderStatuses, error) {
 		}
 	}
 
-	code, resp, err := makeCall("DELETE", "cancelTestOrder", []interface{}{slotID}, deviceToken, map[string]string{})
+	code, resp, err := makeCall("cancelTestOrder", []interface{}{slotID}, deviceToken, map[string]string{})
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func GetOrderInfo(deviceToken, instanceID string) (*OrderInfoData, error) {
 			},
 		}
 	}
-	code, resp, err := makeCall("GET", "getOrderInfo", []interface{}{instanceID}, deviceToken, map[string]string{})
+	code, resp, err := makeCall("getOrderInfo", []interface{}{instanceID}, deviceToken, map[string]string{})
 	if err != nil {
 		return nil, err
 	}

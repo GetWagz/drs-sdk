@@ -38,7 +38,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 		Slots: map[string]Slot{},
 	}
 
-	code, body, err := makeCall("GET", "subscriptionInfo", nil, deviceToken, map[string]string{})
+	code, body, err := makeCall("subscriptionInfo", nil, deviceToken, map[string]string{})
 	if err != nil {
 		return nil, err
 	}

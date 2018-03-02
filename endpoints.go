@@ -1,5 +1,11 @@
 package drs
 
+const (
+	methodGet    = "GET"
+	methodDelete = "DELETE"
+	methodPost   = "POST"
+)
+
 type endpoint struct {
 	Path     string
 	Method   string
@@ -15,7 +21,8 @@ type endpointHeader struct {
 // endpoints holds all of the endpoints the SDK currently supports, including the mockdata needed for tests
 var endpoints = map[string]endpoint{
 	"cancelTestOrder": endpoint{
-		Path: "testOrders/slots/%s",
+		Path:   "testOrders/slots/%s",
+		Method: methodDelete,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -40,7 +47,8 @@ var endpoints = map[string]endpoint{
 		}`,
 	},
 	"deregister": endpoint{
-		Path: "registration",
+		Path:   "registration",
+		Method: methodDelete,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -54,7 +62,8 @@ var endpoints = map[string]endpoint{
 		MockGood: "",
 	},
 	"deviceStatus": endpoint{
-		Path: "deviceStatus/%s",
+		Path:   "deviceStatus/%s",
+		Method: methodPost,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -69,7 +78,7 @@ var endpoints = map[string]endpoint{
 	},
 	"getOrderInfo": endpoint{
 		Path:   "getOrderInfo/%s",
-		Method: "GET",
+		Method: methodGet,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -96,7 +105,8 @@ var endpoints = map[string]endpoint{
 		 }`,
 	},
 	"replenishSlot": endpoint{
-		Path: "replenish/%s",
+		Path:   "replenish/%s",
+		Method: methodPost,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -112,8 +122,24 @@ var endpoints = map[string]endpoint{
 			"detailCode" : "STANDARD_ORDER_PLACED"
 			}`,
 	},
+	"slotStatus": endpoint{
+		Path:   "slotStatus/%s",
+		Method: methodPost,
+		Headers: []endpointHeader{
+			endpointHeader{
+				Header: "x-amzn-accept-type",
+				Value:  "x-amzn-accept-type: com.amazon.dash.replenishment.DrsSlotStatusResult@1.0",
+			},
+			endpointHeader{
+				Header: "x-amzn-type-version",
+				Value:  "x-amzn-type-version: com.amazon.dash.replenishment.DrsSlotStatusInput@1.0",
+			},
+		},
+		MockGood: "",
+	},
 	"subscriptionInfo": endpoint{
-		Path: "/subscriptionInfo",
+		Path:   "/subscriptionInfo",
+		Method: methodGet,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",

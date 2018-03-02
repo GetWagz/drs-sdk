@@ -18,15 +18,12 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	if e.Data != nil {
-		return fmt.Sprintf("%+v", e.Data)
-	}
 	return fmt.Sprintf("%d", e.Code)
 }
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
 //I really want to look at replace the pathParams in a sane way
-func makeCall(method, endpoint string, pathParams []interface{}, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
+func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
 	//clean up the url and endpoint
 	err = &APIError{}
 	if strings.HasPrefix(endpoint, "/") {
@@ -56,15 +53,6 @@ func makeCall(method, endpoint string, pathParams []interface{}, deviceAuth stri
 		url = fmt.Sprintf(url, pathParams...)
 	}
 
-	method = strings.ToLower(method)
-	if method != "get" && method != "post" && method != "delete" && method != "put" && method != "patch" {
-		err.Code = 400
-		err.Data = map[string]string{
-			"message": fmt.Sprintf("method must be either get, patch, put, post, or delete; received: %s", method),
-		}
-		return 500, responseData, err
-	}
-
 	var response *resty.Response
 
 	request := resty.R().
@@ -78,16 +66,13 @@ func makeCall(method, endpoint string, pathParams []interface{}, deviceAuth stri
 
 	//now, do what we need to do depending on the method
 	var reqErr error
-	if method == "get" {
+	method := end.Method
+	if method == methodGet {
 		response, reqErr = request.SetQueryParams(data.(map[string]string)).Get(url)
-	} else if method == "delete" {
+	} else if method == methodDelete {
 		response, reqErr = request.Delete(url)
-	} else if method == "post" {
+	} else if method == methodPost {
 		response, reqErr = request.SetBody(data).Post(url)
-	} else if method == "put" {
-		response, reqErr = request.SetBody(data).Put(url)
-	} else if method == "patch" {
-		response, reqErr = request.SetBody(data).Patch(url)
 	}
 
 	if reqErr != nil {
