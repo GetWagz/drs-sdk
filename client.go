@@ -1,5 +1,7 @@
-// Package drs provides a very basic and simple API for working with V2 of the Amazon Dash Replenishment Services
-// For more information, check the README file at https://github.com/kevineaton/drs-sdk
+/*
+Package drs provides a very basic and simple API for working with V2 of the Amazon Dash Replenishment Services
+For more information, check the README file at https://github.com/kevineaton/drs-sdk
+*/
 package drs
 
 import (
@@ -20,91 +22,6 @@ func (e *APIError) Error() string {
 		return fmt.Sprintf("%+v", e.Data)
 	}
 	return fmt.Sprintf("%d", e.Code)
-}
-
-type endpoint struct {
-	Path     string
-	Headers  []endpointHeader
-	MockGood string
-}
-
-type endpointHeader struct {
-	Header string
-	Value  string
-}
-
-// endpoints holds all of the endpoints the SDK currently supports, including the mockdata needed for tests
-var endpoints = map[string]endpoint{
-	"subscriptionInfo": endpoint{
-		Path: "/subscriptionInfo",
-		Headers: []endpointHeader{
-			endpointHeader{
-				Header: "x-amzn-accept-type",
-				Value:  "com.amazon.dash.replenishment.DrsSubscriptionInfoResult@2.0",
-			},
-			endpointHeader{
-				Header: "x-amzn-type-version",
-				Value:  "com.amazon.dash.replenishment.DrsSubscriptionInfoInput@1.0",
-			},
-		},
-		MockGood: `{
-			"slotsSubscriptionStatus": {
-				"slot1": {
-					"productInfoList": [{
-						"asin": "string",
-						"quantity": 1,
-						"unit": "count"
-					}],
-					"subscribed": true
-				}
-			}
-		 }`,
-	},
-	"deregister": endpoint{
-		Path: "registration",
-		Headers: []endpointHeader{
-			endpointHeader{
-				Header: "x-amzn-accept-type",
-				Value:  "com.amazon.dash.replenishment.DrsDeregisterResult@1.0",
-			},
-			endpointHeader{
-				Header: "x-amzn-type-version",
-				Value:  "com.amazon.dash.replenishment.DrsDeregisterInput@2.0",
-			},
-		},
-		MockGood: "",
-	},
-	"deviceStatus": endpoint{
-		Path: "deviceStatus/%s",
-		Headers: []endpointHeader{
-			endpointHeader{
-				Header: "x-amzn-accept-type",
-				Value:  "com.amazon.dash.replenishment.DrsDeviceStatusResult@1.0",
-			},
-			endpointHeader{
-				Header: "x-amzn-type-version",
-				Value:  "com.amazon.dash.replenishment.DrsDeviceStatusInput@1.0",
-			},
-		},
-		MockGood: "",
-	},
-	"replenishSlot": endpoint{
-		Path: "replenish/%s",
-		Headers: []endpointHeader{
-			endpointHeader{
-				Header: "x-amzn-accept-type",
-				Value:  "com.amazon.dash.replenishment.DrsReplenishResult@1.0",
-			},
-			endpointHeader{
-				Header: "x-amzn-type-version",
-				Value:  "com.amazon.dash.replenishment.DrsReplenishInput@1.0",
-			},
-		},
-		MockGood: `{
-			"eventInstanceId" : "SOME_EVENT_INSTANCE",
-			"detailCode" : "STANDARD_ORDER_PLACED"
-			}`,
-	},
 }
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
