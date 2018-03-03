@@ -40,6 +40,8 @@ func CancelTestOrder(deviceToken, slotID string) (*SlotOrderStatuses, error) {
 	return &result, nil
 }
 
+/*OrderItem represents a single order item in an order information call
+ */
 type OrderItem struct {
 	ASIN                 string `json:"asin"`
 	ExpectedDeliveryDate string `json:"expectedDeliveryDate"`
@@ -48,11 +50,15 @@ type OrderItem struct {
 	Status               string `json:"status"`
 }
 
+/*OrderInfoData represents a single order a slot
+ */
 type OrderInfoData struct {
 	InstanceID string      `json:"instanceId"`
 	OrderItems []OrderItem `json:"orderItems"`
 }
 
+/*GetOrderInfo gets the information regarding an order identified by its instanceId
+ */
 func GetOrderInfo(deviceToken, instanceID string) (*OrderInfoData, error) {
 	if deviceToken == "" || instanceID == "" {
 		return nil, &APIError{
@@ -78,9 +84,6 @@ func GetOrderInfo(deviceToken, instanceID string) (*OrderInfoData, error) {
 		}
 	}
 	decodeErr := mapstructure.Decode(oid, &result)
-	if decodeErr != nil {
-		return nil, decodeErr
-	}
 
-	return &result, nil
+	return &result, decodeErr
 }
