@@ -24,10 +24,7 @@ func ReplenishSlot(deviceToken, slotID string) (*ReplenishResult, *APIError) {
 	}
 
 	code, body, err := makeCall("replenishSlot", []interface{}{slotID}, deviceToken, map[string]string{})
-	if err != nil {
-		return nil, err
-	}
-	if code != 200 {
+	if err != nil || code != 200 {
 		return nil, err
 	}
 
