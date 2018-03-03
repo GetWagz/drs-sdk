@@ -1,0 +1,7 @@
+language: go
+go:
+  - 1.9
+script: go test
+addons:
+    code_climate:
+        repo_token: c3aa0733d1a63b5c609d4f5dc61f17ffe0f71ed133413ff7754a6c8cc379a5a7
