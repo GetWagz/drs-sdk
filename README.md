@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/kevineaton/drs-sdk?status.svg)](https://godoc.org/github.com/kevineaton/drs-sdk)
 [![Maintainability](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/maintainability)](https://codeclimate.com/github/kevineaton/drs-sdk/maintainability)
 [![Build Status](https://travis-ci.org/kevineaton/drs-sdk.svg?branch=master)](https://travis-ci.org/kevineaton/drs-sdk)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/test_coverage)](https://codeclimate.com/github/kevineaton/drs-sdk/test_coverage)
 
 This library serves as a simple SDK for the Amazon Dash Replenishment Service. While trying to integrate with DRS, no official SDK existed. Given the small footprint of the API, a quick SDK was started until an official SDK is released.
 
@@ -44,11 +45,23 @@ For coverage in HTML format, run
 
 `go test -coverprofile=coverage.out && go tool cover -html=coverage.out`
 
-The coverage is notably low, which may cause concerns. However, most of the uncovered calls would be calls directly to Amazon, which we cannot easily mock in success conditions that are malformed. Feel free to check the results of the coverage report to see what exactly isn't covered and make a determination if that is acceptable to you. This library is currently being used in production.
+The coverage is notably lower than ideal, which may cause concerns. However, most of the uncovered calls would be calls directly to Amazon, which we cannot easily mock in success conditions, that are malformed. Feel free to check the results of the coverage report to see what exactly isn't covered and make a determination if that is acceptable to you. This library is currently being used in production.
 
 ## Contributing
 
 Pull Requests are welcome! See our `CONTRIBUTING.md` file for more information.
+
+## Third-party Libraries
+
+The following libraries are used in this project. We thank the creators and maintainers for making our lives easier!
+
+[Resty](https://github.com/go-resty/resty)
+
+[Logrus](https://github.com/sirupsen/logrus)
+
+[Testify](https://github.com/stretchr/testify)
+
+[Mapstructure](https://github.com/mitchellh/mapstructure)
 
 ## Endpoints Implemented
 
