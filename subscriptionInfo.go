@@ -6,7 +6,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// SubscriptionInfo holds the results of the Subscription Information call. The Slots are a map of strings to Slot data
+// SubscriptionInfo holds the results of the Subscription Information call.
+// The Slots are a map of strings to Slot data
 type SubscriptionInfo struct {
 	Slots map[string]Slot `json:"slotsSubscriptionStatus"`
 }
@@ -24,7 +25,8 @@ type ProductInfoListItem struct {
 	Unit     string `json:"unit"`
 }
 
-// GetSubscriptionInfo gets the subscription information from DRS for the passed in device token
+// GetSubscriptionInfo gets the subscription information from DRS for the
+// passed in device token
 func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, error) {
 	if deviceToken == "" {
 		return nil, &APIError{

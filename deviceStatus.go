@@ -5,9 +5,11 @@ import (
 	"time"
 )
 
-// UpdateDeviceStatus updates the device status. According to the docs, you will want to call this at least once every 24 hours.
+// UpdateDeviceStatus updates the device status. According to the docs, you
+// will want to call this at least once every 24 hours.
 //
-// If lastStatus is an empty string, we will replace it with the current timestamp in ISO8601
+// If lastStatus is an empty string, we will replace it with the current
+// timestamp in ISO8601
 func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, error) {
 	if deviceToken == "" {
 		return false, &APIError{
@@ -21,7 +23,7 @@ func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, error) {
 	if lastStatus == "" {
 		lastStatus = time.Now().Format(time.RFC3339)
 	} else {
-		//parse and make sure everything looks right
+		// Parse and make sure everything looks right
 		_, timeErr := time.Parse(time.RFC3339, lastStatus)
 		if timeErr != nil {
 			return false, &APIError{

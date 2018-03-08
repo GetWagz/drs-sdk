@@ -2,7 +2,8 @@ package drs
 
 import "net/http"
 
-// DeregisterDevice sends a request to DRS requesting that the device is deregistered from the service
+// DeregisterDevice sends a request to DRS requesting that the device is
+// deregistered from the service
 func DeregisterDevice(deviceToken string) (bool, error) {
 	if deviceToken == "" {
 		return false, &APIError{

@@ -6,15 +6,14 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-/*ReplenishResult represents the end result of a request to replenish a slot
- */
+// ReplenishResult represents the end result of a request to replenish a slot
 type ReplenishResult struct {
 	EventInstanceID string `json:"eventInstanceId"`
 	DetailCode      string `json:"detailCode"`
 }
 
-/*ReplenishSlot asks Amazon to submit an order to replenish a specific slot for the device
- */
+// ReplenishSlot asks Amazon to submit an order to replenish a specific slot
+// for the device
 func ReplenishSlot(deviceToken, slotID string) (*ReplenishResult, error) {
 	if deviceToken == "" {
 		return nil, &APIError{

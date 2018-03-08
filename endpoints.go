@@ -14,7 +14,8 @@ type endpointHeader struct {
 	Value  string
 }
 
-// endpoints holds all of the endpoints the SDK currently supports, including the mockdata needed for tests
+// endpoints holds all of the endpoints the SDK currently supports, including
+// the mockdata needed for tests
 var endpoints = map[string]endpoint{
 	"cancelTestOrder": endpoint{
 		Path:   "testOrders/slots/%s",
