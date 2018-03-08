@@ -15,7 +15,7 @@ type ReplenishResult struct {
 
 /*ReplenishSlot asks Amazon to submit an order to replenish a specific slot for the device
  */
-func ReplenishSlot(deviceToken, slotID string) (*ReplenishResult, *APIError) {
+func ReplenishSlot(deviceToken, slotID string) (*ReplenishResult, error) {
 	if deviceToken == "" {
 		return nil, &APIError{
 			Code: http.StatusBadRequest,

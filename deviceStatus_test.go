@@ -12,11 +12,16 @@ func TestDeviceStatus(t *testing.T) {
 	result, err := UpdateDeviceStatus("", "")
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
+
 	result, err = UpdateDeviceStatus("TEST", "2005-11-06 01:54:00")
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
 
 	result, err = UpdateDeviceStatus("TEST", "2008-01-01T17:08:00Z")
 	assert.Nil(t, err)

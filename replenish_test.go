@@ -21,6 +21,8 @@ func TestReplenishment(t *testing.T) {
 	result, err = ReplenishSlot("BadToken", "1234")
 	assert.Nil(t, result)
 	assert.NotNil(t, err)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
 
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
 }

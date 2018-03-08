@@ -27,7 +27,7 @@ func (e *APIError) Error() string {
 
 //This is the primary method in the package. It should NOT be called directly except through the SDK.
 //I really want to look at replace the pathParams in a sane way
-func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err *APIError) {
+func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data interface{}) (statusCode int, responseData map[string]interface{}, err error) {
 	//clean up the url and endpoint
 	err = &APIError{}
 	if strings.HasPrefix(endpoint, "/") {
@@ -36,11 +36,12 @@ func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data
 	//make sure that endpoint exists
 	end, endpointFound := endpoints[endpoint]
 	if !endpointFound {
-		err.Code = http.StatusNotFound
-		err.Data = map[string]string{
-			"message": "Invalid endpoint",
+		return http.StatusNotFound, responseData, &APIError{
+			Code: http.StatusNotFound,
+			Data: map[string]string{
+				"message": "Invalid endpoint",
+			},
 		}
-		return http.StatusNotFound, responseData, err
 	}
 
 	//if the userAuth is passed in as TEST, we just send mock data back
@@ -81,18 +82,20 @@ func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data
 	}
 
 	if reqErr != nil {
-		err.Code = http.StatusInternalServerError
-		err.Data = reqErr.Error()
-		return http.StatusInternalServerError, responseData, err
+		return http.StatusInternalServerError, responseData, &APIError{
+			Code: http.StatusInternalServerError,
+			Data: reqErr.Error(),
+		}
 	}
 
 	statusCode = response.StatusCode()
 	if statusCode >= http.StatusMultipleChoices {
 		apiError := map[string]interface{}{}
 		json.Unmarshal(response.Body(), &apiError)
-		err.Code = statusCode
-		err.Data = apiError
-		return statusCode, responseData, err
+		return statusCode, responseData, &APIError{
+			Code: statusCode,
+			Data: apiError,
+		}
 	}
 
 	json.Unmarshal(response.Body(), &responseData)

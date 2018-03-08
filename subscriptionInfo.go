@@ -25,15 +25,14 @@ type ProductInfoListItem struct {
 }
 
 // GetSubscriptionInfo gets the subscription information from DRS for the passed in device token
-func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
+func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, error) {
 	if deviceToken == "" {
-		err := APIError{
+		return nil, &APIError{
 			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
 		}
-		return nil, &err
 	}
 
 	info := SubscriptionInfo{

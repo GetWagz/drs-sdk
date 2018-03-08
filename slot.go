@@ -27,38 +27,35 @@ type SlotStatus struct {
 
 /*ReportSlotStatus reports a slot status to Amazon. See the SlotStatus struct for information about the parameters
  */
-func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bool, *APIError) {
+func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bool, error) {
 	if deviceToken == "" || slotID == "" {
-		err := APIError{
+		return false, &APIError{
 			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
 		}
-		return false, &err
 	}
 
 	expParsed, timeErr := time.Parse(time.RFC3339, status.ExpectedReplenishmentDate)
 	if timeErr != nil {
-		err := APIError{
+		return false, &APIError{
 			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "ExpectedReplenishmentDate is not valid",
 			},
 		}
-		return false, &err
 	}
 	status.ExpectedReplenishmentDate = expParsed.Format(time.RFC3339)
 
 	lastParsed, timeErr := time.Parse(time.RFC3339, status.LastUseDate)
 	if timeErr != nil {
-		err := APIError{
+		return false, &APIError{
 			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "ExpectedReplenishmentDate is not valid",
 			},
 		}
-		return false, &err
 	}
 	status.LastUseDate = lastParsed.Format(time.RFC3339)
 

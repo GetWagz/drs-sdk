@@ -23,24 +23,34 @@ func TestSlotStatus(t *testing.T) {
 	result, err := ReportSlotStatus("", "", &goodInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
+
 	result, err = ReportSlotStatus("TEST", "", &goodInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
+
 	result, err = ReportSlotStatus("TEST", "TEST", &badInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
 
 	//make expected fine but last still bad
 	badInput.ExpectedReplenishmentDate = "2015-12-28T10:00:00Z"
 	result, err = ReportSlotStatus("TEST", "TEST", &badInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, http.StatusBadRequest, err.Code)
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
+
 	result, err = ReportSlotStatus("TEST", "TEST", &goodInput)
 	assert.Nil(t, err)
 	assert.True(t, result)
-
 }

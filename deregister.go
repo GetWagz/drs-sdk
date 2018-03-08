@@ -3,15 +3,14 @@ package drs
 import "net/http"
 
 // DeregisterDevice sends a request to DRS requesting that the device is deregistered from the service
-func DeregisterDevice(deviceToken string) (bool, *APIError) {
+func DeregisterDevice(deviceToken string) (bool, error) {
 	if deviceToken == "" {
-		err := APIError{
+		return false, &APIError{
 			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
 		}
-		return false, &err
 	}
 
 	code, _, err := makeCall("deregister", nil, deviceToken, map[string]string{})

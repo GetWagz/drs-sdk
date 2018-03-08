@@ -22,5 +22,8 @@ func TestGettingTheUserSubscription(t *testing.T) {
 	info, err = GetSubscriptionInfo("AFakeAuthBearer")
 	assert.Nil(t, info)
 	assert.NotNil(t, err)
-	assert.Equal(t, err.Code, http.StatusBadRequest)
+
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
 }
