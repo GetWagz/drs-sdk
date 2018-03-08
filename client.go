@@ -9,8 +9,9 @@ package drs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-resty/resty"
 	"strings"
+
+	"github.com/go-resty/resty"
 )
 
 // APIError represents an error from the API and SDK. It implements Error() and contains additional data such as Code and Data. Code represents, in most cases, the HTTP status code. Data will be filled with information that depends on the context of the usage.

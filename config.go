@@ -2,9 +2,10 @@ package drs
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Config is the global configuration object that holds global configuration settings
