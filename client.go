@@ -9,6 +9,7 @@ package drs
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/go-resty/resty"
@@ -69,12 +70,13 @@ func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data
 
 	//now, do what we need to do depending on the method
 	var reqErr error
-	method := end.Method
-	if method == methodGet {
+
+	switch end.Method {
+	case http.MethodGet:
 		response, reqErr = request.SetQueryParams(data.(map[string]string)).Get(url)
-	} else if method == methodDelete {
+	case http.MethodDelete:
 		response, reqErr = request.Delete(url)
-	} else if method == methodPost {
+	case http.MethodPost:
 		response, reqErr = request.SetBody(data).Post(url)
 	}
 
