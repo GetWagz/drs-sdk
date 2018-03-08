@@ -1,6 +1,7 @@
 package drs
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,22 +23,22 @@ func TestSlotStatus(t *testing.T) {
 	result, err := ReportSlotStatus("", "", &goodInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, 400, err.Code)
+	assert.Equal(t, http.StatusBadRequest, err.Code)
 	result, err = ReportSlotStatus("TEST", "", &goodInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, 400, err.Code)
+	assert.Equal(t, http.StatusBadRequest, err.Code)
 	result, err = ReportSlotStatus("TEST", "TEST", &badInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, 400, err.Code)
+	assert.Equal(t, http.StatusBadRequest, err.Code)
 
 	//make expected fine but last still bad
 	badInput.ExpectedReplenishmentDate = "2015-12-28T10:00:00Z"
 	result, err = ReportSlotStatus("TEST", "TEST", &badInput)
 	assert.NotNil(t, err)
 	assert.False(t, result)
-	assert.Equal(t, 400, err.Code)
+	assert.Equal(t, http.StatusBadRequest, err.Code)
 	result, err = ReportSlotStatus("TEST", "TEST", &goodInput)
 	assert.Nil(t, err)
 	assert.True(t, result)

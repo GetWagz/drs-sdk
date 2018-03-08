@@ -1,6 +1,7 @@
 package drs
 
 import (
+	"net/http"
 	"time"
 )
 
@@ -29,7 +30,7 @@ type SlotStatus struct {
 func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bool, *APIError) {
 	if deviceToken == "" || slotID == "" {
 		err := APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
@@ -40,7 +41,7 @@ func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bo
 	expParsed, timeErr := time.Parse(time.RFC3339, status.ExpectedReplenishmentDate)
 	if timeErr != nil {
 		err := APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "ExpectedReplenishmentDate is not valid",
 			},
@@ -52,7 +53,7 @@ func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bo
 	lastParsed, timeErr := time.Parse(time.RFC3339, status.LastUseDate)
 	if timeErr != nil {
 		err := APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "ExpectedReplenishmentDate is not valid",
 			},
@@ -62,7 +63,7 @@ func ReportSlotStatus(deviceToken string, slotID string, status *SlotStatus) (bo
 	status.LastUseDate = lastParsed.Format(time.RFC3339)
 
 	code, _, err := makeCall("slotStatus", []interface{}{slotID}, deviceToken, status)
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return false, err
 	}
 

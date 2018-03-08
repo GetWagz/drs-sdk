@@ -1,6 +1,8 @@
 package drs
 
 import (
+	"net/http"
+
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -19,7 +21,7 @@ type SlotOrderStatuses struct {
 func CancelTestOrder(deviceToken, slotID string) (*SlotOrderStatuses, error) {
 	if deviceToken == "" || slotID == "" {
 		return nil, &APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken and slotID cannot be blank",
 			},
@@ -27,7 +29,7 @@ func CancelTestOrder(deviceToken, slotID string) (*SlotOrderStatuses, error) {
 	}
 
 	code, resp, err := makeCall("cancelTestOrder", []interface{}{slotID}, deviceToken, map[string]string{})
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return nil, err
 	}
 
@@ -62,14 +64,14 @@ type OrderInfoData struct {
 func GetOrderInfo(deviceToken, instanceID string) (*OrderInfoData, error) {
 	if deviceToken == "" || instanceID == "" {
 		return nil, &APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken and instanceID cannot be blank",
 			},
 		}
 	}
 	code, resp, err := makeCall("getOrderInfo", []interface{}{instanceID}, deviceToken, map[string]string{})
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return nil, err
 	}
 
@@ -77,7 +79,7 @@ func GetOrderInfo(deviceToken, instanceID string) (*OrderInfoData, error) {
 	oid, oidOK := resp["orderInfoData"]
 	if !oidOK || oid == "" {
 		return nil, &APIError{
-			Code: 500,
+			Code: http.StatusInternalServerError,
 			Data: map[string]string{
 				"message": "no orderInfoData was returned from Amazon",
 			},

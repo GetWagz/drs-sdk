@@ -1,6 +1,8 @@
 package drs
 
 import (
+	"net/http"
+
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -26,7 +28,7 @@ type ProductInfoListItem struct {
 func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 	if deviceToken == "" {
 		err := APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
@@ -39,7 +41,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 	}
 
 	code, body, err := makeCall("subscriptionInfo", nil, deviceToken, map[string]string{})
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return nil, err
 	}
 
@@ -49,7 +51,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 		slotErr := mapstructure.Decode(value, &slot)
 		if slotErr != nil {
 			return nil, &APIError{
-				Code: 400,
+				Code: http.StatusBadRequest,
 				Data: map[string]string{
 					"message": "Could not decode response",
 				},

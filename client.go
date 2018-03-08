@@ -36,18 +36,18 @@ func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data
 	//make sure that endpoint exists
 	end, endpointFound := endpoints[endpoint]
 	if !endpointFound {
-		err.Code = 404
+		err.Code = http.StatusNotFound
 		err.Data = map[string]string{
 			"message": "Invalid endpoint",
 		}
-		return 404, responseData, err
+		return http.StatusNotFound, responseData, err
 	}
 
 	//if the userAuth is passed in as TEST, we just send mock data back
 	if deviceAuth == "TEST" {
 		json.Unmarshal([]byte(end.MockGood), &responseData)
 
-		return 200, responseData, nil
+		return http.StatusOK, responseData, nil
 	}
 
 	url := fmt.Sprintf("%s%s", Config.RootURL, end.Path)
@@ -81,13 +81,13 @@ func makeCall(endpoint string, pathParams []interface{}, deviceAuth string, data
 	}
 
 	if reqErr != nil {
-		err.Code = 500
+		err.Code = http.StatusInternalServerError
 		err.Data = reqErr.Error()
-		return 500, responseData, err
+		return http.StatusInternalServerError, responseData, err
 	}
 
 	statusCode = response.StatusCode()
-	if statusCode >= 300 {
+	if statusCode >= http.StatusMultipleChoices {
 		apiError := map[string]interface{}{}
 		json.Unmarshal(response.Body(), &apiError)
 		err.Code = statusCode

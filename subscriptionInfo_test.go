@@ -1,6 +1,7 @@
 package drs
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,5 +22,5 @@ func TestGettingTheUserSubscription(t *testing.T) {
 	info, err = GetSubscriptionInfo("AFakeAuthBearer")
 	assert.Nil(t, info)
 	assert.NotNil(t, err)
-	assert.Equal(t, err.Code, 400)
+	assert.Equal(t, err.Code, http.StatusBadRequest)
 }

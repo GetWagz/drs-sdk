@@ -1,6 +1,7 @@
 package drs
 
 import (
+	"net/http"
 	"time"
 )
 
@@ -10,7 +11,7 @@ import (
 func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, *APIError) {
 	if deviceToken == "" {
 		err := APIError{
-			Code: 400,
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
@@ -25,7 +26,7 @@ func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, *APIError)
 		_, timeErr := time.Parse(time.RFC3339, lastStatus)
 		if timeErr != nil {
 			err := APIError{
-				Code: 400,
+				Code: http.StatusBadRequest,
 				Data: map[string]string{
 					"message": "lastStatus is not valid",
 				},
@@ -37,7 +38,7 @@ func UpdateDeviceStatus(deviceToken string, lastStatus string) (bool, *APIError)
 	code, _, err := makeCall("deviceStatus", nil, deviceToken, map[string]string{
 		"mostRecentlyActiveDate": lastStatus,
 	})
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return false, err
 	}
 
