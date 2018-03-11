@@ -1,8 +1,10 @@
 package drs
 
 import (
-	"github.com/stretchr/testify/assert"
+	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReplenishment(t *testing.T) {
@@ -19,6 +21,8 @@ func TestReplenishment(t *testing.T) {
 	result, err = ReplenishSlot("BadToken", "1234")
 	assert.Nil(t, result)
 	assert.NotNil(t, err)
-	assert.Equal(t, 400, err.Code)
 
+	if apiError, ok := err.(*APIError); ok {
+		assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	}
 }

@@ -1,14 +1,16 @@
 package drs
 
 import (
-	"github.com/stretchr/testify/assert"
+	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAPIError(t *testing.T) {
 	ConfigSetup()
 	err := APIError{
-		Code: 400,
+		Code: http.StatusBadRequest,
 		Data: map[string]string{
 			"message": "Testing the error message",
 		},
@@ -23,6 +25,6 @@ func TestMakeCall(t *testing.T) {
 
 	//test an endpoint that doesn't exist
 	code, _, err := makeCall("/platypus", nil, "", nil)
-	assert.Equal(t, code, 404)
+	assert.Equal(t, code, http.StatusNotFound)
 	assert.NotNil(t, err)
 }

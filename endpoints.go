@@ -1,10 +1,6 @@
 package drs
 
-const (
-	methodGet    = "GET"
-	methodDelete = "DELETE"
-	methodPost   = "POST"
-)
+import "net/http"
 
 type endpoint struct {
 	Path     string
@@ -18,11 +14,12 @@ type endpointHeader struct {
 	Value  string
 }
 
-// endpoints holds all of the endpoints the SDK currently supports, including the mockdata needed for tests
+// endpoints holds all of the endpoints the SDK currently supports, including
+// the mockdata needed for tests
 var endpoints = map[string]endpoint{
 	"cancelTestOrder": endpoint{
 		Path:   "testOrders/slots/%s",
-		Method: methodDelete,
+		Method: http.MethodDelete,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -48,7 +45,7 @@ var endpoints = map[string]endpoint{
 	},
 	"deregister": endpoint{
 		Path:   "registration",
-		Method: methodDelete,
+		Method: http.MethodDelete,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -63,7 +60,7 @@ var endpoints = map[string]endpoint{
 	},
 	"deviceStatus": endpoint{
 		Path:   "deviceStatus/%s",
-		Method: methodPost,
+		Method: http.MethodPost,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -78,7 +75,7 @@ var endpoints = map[string]endpoint{
 	},
 	"getOrderInfo": endpoint{
 		Path:   "getOrderInfo/%s",
-		Method: methodGet,
+		Method: http.MethodGet,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -106,7 +103,7 @@ var endpoints = map[string]endpoint{
 	},
 	"replenishSlot": endpoint{
 		Path:   "replenish/%s",
-		Method: methodPost,
+		Method: http.MethodPost,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -124,7 +121,7 @@ var endpoints = map[string]endpoint{
 	},
 	"slotStatus": endpoint{
 		Path:   "slotStatus/%s",
-		Method: methodPost,
+		Method: http.MethodPost,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
@@ -139,7 +136,7 @@ var endpoints = map[string]endpoint{
 	},
 	"subscriptionInfo": endpoint{
 		Path:   "/subscriptionInfo",
-		Method: methodGet,
+		Method: http.MethodGet,
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",

@@ -2,9 +2,10 @@ package drs
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Config is the global configuration object that holds global configuration settings
@@ -16,7 +17,7 @@ type ConfigStruct struct {
 	RootURL     string
 }
 
-//ConfigSetup sets up the config struct with data from the environment
+// ConfigSetup sets up the config struct with data from the environment
 func ConfigSetup() *ConfigStruct {
 	c := new(ConfigStruct)
 
@@ -29,7 +30,7 @@ func ConfigSetup() *ConfigStruct {
 
 	c.RootURL = strings.ToLower(os.Getenv("DRS_SDK_ROOT_URL"))
 	if c.RootURL == "" {
-		//we set to the default as of 20180224
+		// We set to the default as of 20180224
 		c.RootURL = "https://dash-replenishment-service-na.amazon.com/"
 	}
 	if !strings.HasSuffix(c.RootURL, "/") {
@@ -41,13 +42,14 @@ func ConfigSetup() *ConfigStruct {
 	return c
 }
 
-//init is called when the host application starts up and sets the Configuration and logging settings
+// init is called when the host application starts up and sets the
+// Configuration and logging settings
 func init() {
 	ConfigSetup()
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 }
 
-//log provides structured logging through logrus. We support info, warning, and error
+// log provides structured logging through logrus. We support info, warning, and error
 func log(level, key, message string, data interface{}) string {
 	if Config.Environment != "production" {
 		level = strings.ToLower(level)

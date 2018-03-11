@@ -1,10 +1,13 @@
 package drs
 
 import (
+	"net/http"
+
 	"github.com/mitchellh/mapstructure"
 )
 
-// SubscriptionInfo holds the results of the Subscription Information call. The Slots are a map of strings to Slot data
+// SubscriptionInfo holds the results of the Subscription Information call.
+// The Slots are a map of strings to Slot data
 type SubscriptionInfo struct {
 	Slots map[string]Slot `json:"slotsSubscriptionStatus"`
 }
@@ -22,16 +25,16 @@ type ProductInfoListItem struct {
 	Unit     string `json:"unit"`
 }
 
-// GetSubscriptionInfo gets the subscription information from DRS for the passed in device token
-func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
+// GetSubscriptionInfo gets the subscription information from DRS for the
+// passed in device token
+func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, error) {
 	if deviceToken == "" {
-		err := APIError{
-			Code: 400,
+		return nil, &APIError{
+			Code: http.StatusBadRequest,
 			Data: map[string]string{
 				"message": "deviceToken cannot be blank",
 			},
 		}
-		return nil, &err
 	}
 
 	info := SubscriptionInfo{
@@ -39,7 +42,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 	}
 
 	code, body, err := makeCall("subscriptionInfo", nil, deviceToken, map[string]string{})
-	if err != nil || code != 200 {
+	if err != nil || code != http.StatusOK {
 		return nil, err
 	}
 
@@ -49,7 +52,7 @@ func GetSubscriptionInfo(deviceToken string) (*SubscriptionInfo, *APIError) {
 		slotErr := mapstructure.Decode(value, &slot)
 		if slotErr != nil {
 			return nil, &APIError{
-				Code: 400,
+				Code: http.StatusBadRequest,
 				Data: map[string]string{
 					"message": "Could not decode response",
 				},
