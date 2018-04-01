@@ -125,11 +125,11 @@ var endpoints = map[string]endpoint{
 		Headers: []endpointHeader{
 			endpointHeader{
 				Header: "x-amzn-accept-type",
-				Value:  "x-amzn-accept-type: com.amazon.dash.replenishment.DrsSlotStatusResult@1.0",
+				Value:  "com.amazon.dash.replenishment.DrsSlotStatusResult@1.0",
 			},
 			endpointHeader{
 				Header: "x-amzn-type-version",
-				Value:  "x-amzn-type-version: com.amazon.dash.replenishment.DrsSlotStatusInput@1.0",
+				Value:  "com.amazon.dash.replenishment.DrsSlotStatusInput@1.0",
 			},
 		},
 		MockGood: "",
