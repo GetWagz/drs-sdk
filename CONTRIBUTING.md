@@ -7,13 +7,13 @@ We have a strict `no jerks` rule. Be respectful and understand that there are of
 
 First, fork, then clone the repository:
 
-    git clone git@github.com:kevineaton/drs-sdk.git
+    git clone git@github.com:getwagz/drs-sdk.git
 
 Set up the library using the README steps. Please make sure all tests pass and that any new features include relevant tests. Not sure how to write tests? No problem, just ask and we can try our best to help you!
 
 Push to your fork and [submit a pull request][pr].
 
-[pr]: https://github.com/kevineaton/drs-sdk/compare/
+[pr]: https://github.com/getwagz/drs-sdk/compare/
 
 As always, open an issue if you find a bug or problem!
 

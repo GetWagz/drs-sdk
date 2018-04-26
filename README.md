@@ -1,9 +1,9 @@
 # Amazon Dash Replenishment Service SDK for Go
 
-[![GoDoc](https://godoc.org/github.com/kevineaton/drs-sdk?status.svg)](https://godoc.org/github.com/kevineaton/drs-sdk)
-[![Maintainability](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/maintainability)](https://codeclimate.com/github/kevineaton/drs-sdk/maintainability)
-[![Build Status](https://travis-ci.org/kevineaton/drs-sdk.svg?branch=master)](https://travis-ci.org/kevineaton/drs-sdk)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/test_coverage)](https://codeclimate.com/github/kevineaton/drs-sdk/test_coverage)
+[![GoDoc](https://godoc.org/github.com/getwagz/drs-sdk?status.svg)](https://godoc.org/github.com/getwagz/drs-sdk)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/maintainability)](https://codeclimate.com/github/getwagz/drs-sdk/maintainability)
+[![Build Status](https://travis-ci.org/getwagz/drs-sdk.svg?branch=master)](https://travis-ci.org/getwagz/drs-sdk)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/fa368057b21ff923ca50/test_coverage)](https://codeclimate.com/github/getwagz/drs-sdk/test_coverage)
 
 This library serves as a simple SDK for the Amazon Dash Replenishment Service. While trying to integrate with DRS, no official SDK existed. Given the small footprint of the API, a quick SDK was started until an official SDK is released.
 
@@ -13,11 +13,11 @@ This library serves as a simple SDK for the Amazon Dash Replenishment Service. W
 
 You can simply install the package:
 
-`go get github.com/kevineaton/drs-sdk`
+`go get github.com/getwagz/drs-sdk`
 
 Or if you are using `dep`:
 
-`dep ensure -add github.com/kevineaton/drs-sdk`
+`dep ensure -add github.com/getwagz/drs-sdk`
 
 ## Usage
 

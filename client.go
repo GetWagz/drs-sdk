@@ -1,6 +1,6 @@
 // Package drs provides a very basic and simple API for working with V2 of the
 // Amazon Dash Replenishment Services
-// For more information, check the README file at https://github.com/kevineaton/drs-sdk
+// For more information, check the README file at https://github.com/getwagz/drs-sdk
 //
 // Most of the functions will require a deviceToken. This is the DRS Access Token
 // retrieved after the user signs up for DRS, most often through LWA. The token
