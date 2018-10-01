@@ -2,6 +2,7 @@ package drs
 
 import "net/http"
 
+// endpoint is a struct for the endpoint in the call
 type endpoint struct {
 	Path     string
 	Method   string
@@ -9,6 +10,7 @@ type endpoint struct {
 	MockGood string
 }
 
+// endpointHeader is a struct for containing the Headers that is required for the endpoint struct
 type endpointHeader struct {
 	Header string
 	Value  string
