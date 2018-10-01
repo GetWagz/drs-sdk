@@ -15,10 +15,10 @@ import (
 	"net/http"
 	"net/textproto"
 	"os"
-	"path"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"sort"
 	"strings"
 )
 
@@ -28,7 +28,7 @@ import (
 
 // IsStringEmpty method tells whether given string is empty or not
 func IsStringEmpty(str string) bool {
-	return (len(strings.TrimSpace(str)) == 0)
+	return len(strings.TrimSpace(str)) == 0
 }
 
 // DetectContentType method is used to figure out `Request.Body` content type for request header
@@ -84,6 +84,16 @@ func Unmarshalc(c *Client, ct string, b []byte, d interface{}) (err error) {
 	return
 }
 
+// way to disable the HTML escape as opt-in
+func jsonMarshal(c *Client, r *Request, d interface{}) ([]byte, error) {
+	if !r.jsonEscapeHTML {
+		return noescapeJSONMarshal(d)
+	} else if !c.jsonEscapeHTML {
+		return noescapeJSONMarshal(d)
+	}
+	return c.JSONMarshal(d)
+}
+
 //‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 // Package Unexported methods
 //___________________________________
@@ -107,6 +117,24 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
+func createMultipartHeader(param, fileName, contentType string) textproto.MIMEHeader {
+	hdr := make(textproto.MIMEHeader)
+	hdr.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+		escapeQuotes(param), escapeQuotes(fileName)))
+	hdr.Set("Content-Type", contentType)
+	return hdr
+}
+
+func addMultipartFormField(w *multipart.Writer, mf *multipartField) error {
+	partWriter, err := w.CreatePart(createMultipartHeader(mf.Param, mf.FileName, mf.ContentType))
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(partWriter, mf.Reader)
+	return err
+}
+
 func writeMultipartFormFile(w *multipart.Writer, fieldName, fileName string, r io.Reader) error {
 	// Auto detect actual multipart content type
 	cbuf := make([]byte, 512)
@@ -115,11 +143,7 @@ func writeMultipartFormFile(w *multipart.Writer, fieldName, fileName string, r i
 		return err
 	}
 
-	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
-		escapeQuotes(fieldName), escapeQuotes(fileName)))
-	h.Set("Content-Type", http.DetectContentType(cbuf))
-	partWriter, err := w.CreatePart(h)
+	partWriter, err := w.CreatePart(createMultipartHeader(fieldName, fileName, http.DetectContentType(cbuf)))
 	if err != nil {
 		return err
 	}
@@ -137,10 +161,7 @@ func addFile(w *multipart.Writer, fieldName, path string) error {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = file.Close()
-	}()
-
+	defer closeq(file)
 	return writeMultipartFormFile(w, fieldName, filepath.Base(path), file)
 }
 
@@ -157,7 +178,7 @@ func getPointer(v interface{}) interface{} {
 }
 
 func isPayloadSupported(m string, allowMethodGet bool) bool {
-	return (m == MethodPost || m == MethodPut || m == MethodDelete || m == MethodPatch || (allowMethodGet && m == MethodGet))
+	return !(m == MethodHead || m == MethodOptions || (m == MethodGet && !allowMethodGet))
 }
 
 func typeOf(i interface{}) reflect.Type {
@@ -206,37 +227,27 @@ func releaseBuffer(buf *bytes.Buffer) {
 	}
 }
 
-func composeRequestURL(pathURL string, c *Client, r *Request) string {
-	if !strings.HasPrefix(pathURL, "/") {
-		pathURL = "/" + pathURL
+func closeq(v interface{}) {
+	if c, ok := v.(io.Closer); ok {
+		sliently(c.Close())
 	}
+}
 
-	hasTrailingSlash := false
-	if strings.HasSuffix(pathURL, "/") && len(pathURL) > 1 {
-		hasTrailingSlash = true
+func sliently(_ ...interface{}) {}
+
+func composeHeaders(hdrs http.Header) string {
+	var str []string
+	for _, k := range sortHeaderKeys(hdrs) {
+		str = append(str, fmt.Sprintf("%25s: %s", k, strings.Join(hdrs[k], ", ")))
 	}
+	return strings.Join(str, "\n")
+}
 
-	reqURL := "/"
-	for _, segment := range strings.Split(pathURL, "/") {
-		if strings.HasPrefix(segment, "{") && strings.HasSuffix(segment, "}") {
-			key := segment[1 : len(segment)-1]
-			if val, found := r.pathParams[key]; found {
-				reqURL = path.Join(reqURL, val)
-				continue
-			}
-
-			if val, found := c.pathParams[key]; found {
-				reqURL = path.Join(reqURL, val)
-				continue
-			}
-		}
-
-		reqURL = path.Join(reqURL, segment)
+func sortHeaderKeys(hdrs http.Header) []string {
+	var keys []string
+	for key := range hdrs {
+		keys = append(keys, key)
 	}
-
-	if hasTrailingSlash {
-		reqURL = reqURL + "/"
-	}
-
-	return reqURL
+	sort.Strings(keys)
+	return keys
 }

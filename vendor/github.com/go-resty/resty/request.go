@@ -110,13 +110,15 @@ func (r *Request) SetMultiValueQueryParams(params url.Values) *Request {
 //			SetQueryString("productId=232&template=fresh-sample&cat=resty&source=google&kw=buy a lot more")
 //
 func (r *Request) SetQueryString(query string) *Request {
-	values, err := url.ParseQuery(strings.TrimSpace(query))
+	params, err := url.ParseQuery(strings.TrimSpace(query))
 	if err == nil {
-		for k := range values {
-			r.QueryParam.Add(k, values.Get(k))
+		for p, v := range params {
+			for _, pv := range v {
+				r.QueryParam.Add(p, pv)
+			}
 		}
 	} else {
-		r.client.Log.Printf("ERROR [%v]", err)
+		r.client.Log.Printf("ERROR %v", err)
 	}
 	return r
 }
@@ -279,6 +281,20 @@ func (r *Request) SetFileReader(param, fileName string, reader io.Reader) *Reque
 	return r
 }
 
+// SetMultipartField method is to set custom data using io.Reader for multipart upload.
+func (r *Request) SetMultipartField(param, fileName, contentType string, reader io.Reader) *Request {
+	r.isMultiPart = true
+
+	r.multipartFields = append(r.multipartFields, &multipartField{
+		Param:       param,
+		FileName:    fileName,
+		ContentType: contentType,
+		Reader:      reader,
+	})
+
+	return r
+}
+
 // SetContentLength method sets the HTTP header `Content-Length` value for current request.
 // By default go-resty won't set `Content-Length`. Also you have an option to enable for every
 // request. See `resty.SetContentLength`
@@ -380,6 +396,14 @@ func (r *Request) ExpectContentType(contentType string) *Request {
 	return r
 }
 
+// SetJSONEscapeHTML method is to enable/disable the HTML escape on JSON marshal.
+//
+// NOTE: This option only applicable to standard JSON Marshaller.
+func (r *Request) SetJSONEscapeHTML(b bool) *Request {
+	r.jsonEscapeHTML = b
+	return r
+}
+
 //‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 // HTTP verb method starts here
 //___________________________________
@@ -428,7 +452,7 @@ func (r *Request) Execute(method, url string) (*Response, error) {
 	var err error
 
 	if r.isMultiPart && !(method == MethodPost || method == MethodPut) {
-		return nil, fmt.Errorf("Multipart content is not allowed in HTTP verb [%v]", method)
+		return nil, fmt.Errorf("multipart content is not allowed in HTTP verb [%v]", method)
 	}
 
 	if r.SRV != nil {
@@ -455,7 +479,7 @@ func (r *Request) Execute(method, url string) (*Response, error) {
 
 			resp, err = r.client.execute(r)
 			if err != nil {
-				r.client.Log.Printf("ERROR [%v] Attempt [%v]", err, attempt)
+				r.client.Log.Printf("ERROR %v, Attempt %v", err, attempt)
 				if r.isContextCancelledIfAvailable() {
 					// stop Backoff from retrying request if request has been
 					// canceled by context
@@ -481,9 +505,14 @@ func (r *Request) Execute(method, url string) (*Response, error) {
 func (r *Request) fmtBodyString() (body string) {
 	body = "***** NO CONTENT *****"
 	if isPayloadSupported(r.Method, r.client.AllowGetMethodPayload) {
+		if _, ok := r.Body.(io.Reader); ok {
+			body = "***** BODY IS io.Reader *****"
+			return
+		}
+
 		// multipart or form-data
 		if r.isMultiPart || r.isFormData {
-			body = string(r.bodyBuf.Bytes())
+			body = r.bodyBuf.String()
 			return
 		}
 

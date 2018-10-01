@@ -288,6 +288,7 @@ func createClient(hc *http.Client) *Client {
 		RetryMaxWaitTime:   defaultMaxWaitTime,
 		JSONMarshal:        json.Marshal,
 		JSONUnmarshal:      json.Unmarshal,
+		jsonEscapeHTML:     true,
 		httpClient:         hc,
 		debugBodySizeLimit: math.MaxInt32,
 		pathParams:         make(map[string]string),
@@ -295,9 +296,6 @@ func createClient(hc *http.Client) *Client {
 
 	// Log Prefix
 	c.SetLogPrefix("RESTY ")
-
-	// Default transport
-	c.SetTransport(&http.Transport{})
 
 	// Default redirect policy
 	c.SetRedirectPolicy(NoRedirectPolicy())

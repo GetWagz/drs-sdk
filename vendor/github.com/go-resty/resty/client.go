@@ -6,6 +6,7 @@ package resty
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
@@ -46,20 +47,21 @@ const (
 )
 
 var (
-	hdrUserAgentKey     = http.CanonicalHeaderKey("User-Agent")
-	hdrAcceptKey        = http.CanonicalHeaderKey("Accept")
-	hdrContentTypeKey   = http.CanonicalHeaderKey("Content-Type")
-	hdrContentLengthKey = http.CanonicalHeaderKey("Content-Length")
-	hdrAuthorizationKey = http.CanonicalHeaderKey("Authorization")
+	hdrUserAgentKey       = http.CanonicalHeaderKey("User-Agent")
+	hdrAcceptKey          = http.CanonicalHeaderKey("Accept")
+	hdrContentTypeKey     = http.CanonicalHeaderKey("Content-Type")
+	hdrContentLengthKey   = http.CanonicalHeaderKey("Content-Length")
+	hdrContentEncodingKey = http.CanonicalHeaderKey("Content-Encoding")
+	hdrAuthorizationKey   = http.CanonicalHeaderKey("Authorization")
 
 	plainTextType   = "text/plain; charset=utf-8"
 	jsonContentType = "application/json; charset=utf-8"
 	formContentType = "application/x-www-form-urlencoded"
 
-	jsonCheck = regexp.MustCompile("(?i:[application|text]/json)")
-	xmlCheck  = regexp.MustCompile("(?i:[application|text]/xml)")
+	jsonCheck = regexp.MustCompile(`(?i:(application|text)/(json|.*\+json)(;|$))`)
+	xmlCheck  = regexp.MustCompile(`(?i:(application|text)/(xml|.*\+xml)(;|$))`)
 
-	hdrUserAgentValue = "go-resty v%s - https://github.com/go-resty/resty"
+	hdrUserAgentValue = "go-resty/%s (https://github.com/go-resty/resty)"
 	bufPool           = &sync.Pool{New: func() interface{} { return &bytes.Buffer{} }}
 )
 
@@ -85,6 +87,7 @@ type Client struct {
 	JSONMarshal           func(v interface{}) ([]byte, error)
 	JSONUnmarshal         func(data []byte, v interface{}) error
 
+	jsonEscapeHTML     bool
 	httpClient         *http.Client
 	setContentLength   bool
 	isHTTPMode         bool
@@ -300,19 +303,15 @@ func (c *Client) SetAuthToken(token string) *Client {
 // R method creates a request instance, its used for Get, Post, Put, Delete, Patch, Head and Options.
 func (c *Client) R() *Request {
 	r := &Request{
-		URL:            "",
-		Method:         "",
-		QueryParam:     url.Values{},
-		FormData:       url.Values{},
-		Header:         http.Header{},
-		Body:           nil,
-		Result:         nil,
-		Error:          nil,
-		RawRequest:     nil,
-		client:         c,
-		bodyBuf:        nil,
-		multipartFiles: []*File{},
-		pathParams:     make(map[string]string),
+		QueryParam: url.Values{},
+		FormData:   url.Values{},
+		Header:     http.Header{},
+
+		client:          c,
+		multipartFiles:  []*File{},
+		multipartFields: []*multipartField{},
+		pathParams:      map[string]string{},
+		jsonEscapeHTML:  true,
 	}
 
 	return r
@@ -503,21 +502,21 @@ func (c *Client) AddRetryCondition(condition RetryConditionFunc) *Client {
 	return c
 }
 
-// SetHTTPMode method sets go-resty mode into HTTP
+// SetHTTPMode method sets go-resty mode to 'http'
 func (c *Client) SetHTTPMode() *Client {
 	return c.SetMode("http")
 }
 
-// SetRESTMode method sets go-resty mode into RESTful
+// SetRESTMode method sets go-resty mode to 'rest'
 func (c *Client) SetRESTMode() *Client {
 	return c.SetMode("rest")
 }
 
 // SetMode method sets go-resty client mode to given value such as 'http' & 'rest'.
-// 	RESTful:
+//	'rest':
 //		- No Redirect
 //		- Automatic response unmarshal if it is JSON or XML
-//	HTML:
+//	'http':
 //		- Up to 10 Redirects
 //		- No automatic unmarshall. Response will be treated as `response.String()`
 //
@@ -569,7 +568,7 @@ func (c *Client) Mode() string {
 func (c *Client) SetTLSClientConfig(config *tls.Config) *Client {
 	transport, err := c.getTransport()
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
 	transport.TLSClientConfig = config
@@ -585,17 +584,17 @@ func (c *Client) SetTLSClientConfig(config *tls.Config) *Client {
 func (c *Client) SetProxy(proxyURL string) *Client {
 	transport, err := c.getTransport()
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
+
 	if pURL, err := url.Parse(proxyURL); err == nil {
 		c.proxyURL = pURL
 		transport.Proxy = http.ProxyURL(c.proxyURL)
 	} else {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		c.RemoveProxy()
 	}
-
 	return c
 }
 
@@ -605,7 +604,7 @@ func (c *Client) SetProxy(proxyURL string) *Client {
 func (c *Client) RemoveProxy() *Client {
 	transport, err := c.getTransport()
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
 	c.proxyURL = nil
@@ -618,7 +617,7 @@ func (c *Client) RemoveProxy() *Client {
 func (c *Client) SetCertificates(certs ...tls.Certificate) *Client {
 	config, err := c.getTLSConfig()
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
 	config.Certificates = append(config.Certificates, certs...)
@@ -631,13 +630,13 @@ func (c *Client) SetCertificates(certs ...tls.Certificate) *Client {
 func (c *Client) SetRootCertificate(pemFilePath string) *Client {
 	rootPemData, err := ioutil.ReadFile(pemFilePath)
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
 
 	config, err := c.getTLSConfig()
 	if err != nil {
-		c.Log.Printf("ERROR [%v]", err)
+		c.Log.Printf("ERROR %v", err)
 		return c
 	}
 	if config.RootCAs == nil {
@@ -662,7 +661,7 @@ func (c *Client) SetOutputDirectory(dirPath string) *Client {
 // SetTransport method sets custom `*http.Transport` or any `http.RoundTripper`
 // compatible interface implementation in the resty client.
 //
-// Please Note:
+// NOTE:
 //
 // - If transport is not type of `*http.Transport` then you may not be able to
 // take advantage of some of the `resty` client settings.
@@ -740,6 +739,14 @@ func (c *Client) SetPathParams(params map[string]string) *Client {
 	return c
 }
 
+// SetJSONEscapeHTML method is to enable/disable the HTML escape on JSON marshal.
+//
+// NOTE: This option only applicable to standard JSON Marshaller.
+func (c *Client) SetJSONEscapeHTML(b bool) *Client {
+	c.jsonEscapeHTML = b
+	return c
+}
+
 // IsProxySet method returns the true if proxy is set on client otherwise false.
 func (c *Client) IsProxySet() bool {
 	return c.proxyURL != nil
@@ -782,6 +789,10 @@ func (c *Client) execute(req *Request) (*Response, error) {
 		}
 	}
 
+	if hostHeader := req.Header.Get("Host"); hostHeader != "" {
+		req.RawRequest.Host = hostHeader
+	}
+
 	req.Time = time.Now()
 	resp, err := c.httpClient.Do(req.RawRequest)
 
@@ -796,11 +807,21 @@ func (c *Client) execute(req *Request) (*Response, error) {
 	}
 
 	if !req.isSaveResponse {
-		defer func() {
-			_ = resp.Body.Close()
-		}()
+		defer closeq(resp.Body)
+		body := resp.Body
 
-		if response.body, err = ioutil.ReadAll(resp.Body); err != nil {
+		// GitHub #142
+		if strings.EqualFold(resp.Header.Get(hdrContentEncodingKey), "gzip") && resp.ContentLength > 0 {
+			if _, ok := body.(*gzip.Reader); !ok {
+				body, err = gzip.NewReader(body)
+				if err != nil {
+					return response, err
+				}
+				defer closeq(body)
+			}
+		}
+
+		if response.body, err = ioutil.ReadAll(body); err != nil {
 			return response, err
 		}
 
@@ -844,6 +865,10 @@ func (c *Client) getTLSConfig() (*tls.Config, error) {
 // returns `*http.Transport` currently in use or error
 // in case currently used `transport` is not an `*http.Transport`
 func (c *Client) getTransport() (*http.Transport, error) {
+	if c.httpClient.Transport == nil {
+		c.SetTransport(new(http.Transport))
+	}
+
 	if transport, ok := c.httpClient.Transport.(*http.Transport); ok {
 		return transport, nil
 	}
@@ -864,4 +889,12 @@ type File struct {
 // String returns string value of current file details
 func (f *File) String() string {
 	return fmt.Sprintf("ParamName: %v; FileName: %v", f.ParamName, f.Name)
+}
+
+// multipartField represent custom data part for multipart request
+type multipartField struct {
+	Param       string
+	FileName    string
+	ContentType string
+	io.Reader
 }
