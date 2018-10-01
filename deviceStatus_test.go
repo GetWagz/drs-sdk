@@ -30,4 +30,8 @@ func TestDeviceStatus(t *testing.T) {
 	result, err = UpdateDeviceStatus("TEST", "")
 	assert.Nil(t, err)
 	assert.True(t, result)
+
+	result, err = UpdateDeviceStatus("rthg", "rth")
+	assert.NotNil(t, err)
+	assert.False(t, result)
 }
