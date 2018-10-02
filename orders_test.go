@@ -1,8 +1,9 @@
 package drs
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCancelTestOrder(t *testing.T) {
@@ -15,6 +16,10 @@ func TestCancelTestOrder(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, info)
 	assert.Equal(t, 2, len(info.SlotOrderStatuses))
+
+	info, err = CancelTestOrder("randomtoken", "randomslotId")
+	assert.NotNil(t, err)
+	assert.Nil(t, info)
 }
 
 func TestGetOrderInfo(t *testing.T) {
@@ -33,4 +38,8 @@ func TestGetOrderInfo(t *testing.T) {
 	assert.Equal(t, info.OrderItems[0].Quantity, 1)
 	assert.Equal(t, info.OrderItems[0].SlotID, "PaperTowel")
 	assert.Equal(t, info.OrderItems[0].Status, "Pending")
+
+	info, err = GetOrderInfo("randomtoken", "instance")
+	assert.NotNil(t, err)
+	assert.Nil(t, info)
 }

@@ -13,4 +13,7 @@ func TestDeregistering(t *testing.T) {
 	result, err := DeregisterDevice("TEST")
 	assert.Nil(t, err)
 	assert.True(t, result)
+	result, err = DeregisterDevice("BadData")
+	assert.NotNil(t, err)
+	assert.False(t, result)
 }

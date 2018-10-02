@@ -25,6 +25,10 @@ func TestMakeCall(t *testing.T) {
 
 	//test an endpoint that doesn't exist
 	code, _, err := makeCall("/platypus", nil, "", nil)
-	assert.Equal(t, code, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, code)
+	assert.NotNil(t, err)
+
+	code, _, err = makeCall("testDelete", nil, "", nil)
+	assert.Equal(t, http.StatusNotFound, code)
 	assert.NotNil(t, err)
 }
