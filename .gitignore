@@ -12,3 +12,6 @@
 
 # Why, MacOS, why?
 .DS_Store
+
+coverage.xml
+coverage.out
