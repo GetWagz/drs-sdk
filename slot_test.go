@@ -53,4 +53,8 @@ func TestSlotStatus(t *testing.T) {
 	result, err = ReportSlotStatus("TEST", "TEST", &goodInput)
 	assert.Nil(t, err)
 	assert.True(t, result)
+
+	result, err = ReportSlotStatus("random", "random", &goodInput)
+	assert.NotNil(t, err)
+	assert.False(t, result)
 }

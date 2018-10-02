@@ -162,4 +162,19 @@ var endpoints = map[string]endpoint{
 			}
 		 }`,
 	},
+	"testDelete": endpoint{
+		Path:   "",
+		Method: http.MethodDelete,
+		Headers: []endpointHeader{
+			endpointHeader{
+				Header: "x-amzn-accept-type",
+				Value:  "com.amazon.dash.replenishment.DrsSlotStatusResult@1.0",
+			},
+			endpointHeader{
+				Header: "x-amzn-type-version",
+				Value:  "com.amazon.dash.replenishment.DrsSlotStatusInput@1.0",
+			},
+		},
+		MockGood: "",
+	},
 }
