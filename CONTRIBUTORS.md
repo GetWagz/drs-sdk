@@ -21,3 +21,9 @@ We recommend you post your name as a ##, then a quick blurb about you, then your
 * Derry, NH
 
 * [My Site](https://www.andrewesherman.net)
+
+## Erin Lewis
+
+* Geek, Taekwondo Martial artist, friend
+
+* Salem, NH
