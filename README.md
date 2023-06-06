@@ -7,7 +7,9 @@
 
 This library serves as a simple SDK for the Amazon Dash Replenishment Service. While trying to integrate with DRS, no official SDK existed. Given the small footprint of the API, a quick SDK was started until an official SDK is released.
 
-*NOTE* This SDK exists as a temporary solution until an official SDK is released from Amazon or a community-standard SDK is developed. This SDK supports V2 of the DRS API.
+## Deprecation and Maintenance
+
+Unfortunately, this repository is no longer being maintained. If you would like to take over maintenance of the repository, please open up an issue in this repository or otherwise contact us. We apologize if this is an inconvenience at all. We are going to freeze this archive. Feel free to fork it as you desire. Best of luck!
 
 ## Installing
 
@@ -78,3 +80,11 @@ Get Order Info [API Docs](https://developer.amazon.com/docs/dash/getorderinfo-en
 Replenish [API Docs](https://developer.amazon.com/docs/dash/replenish-endpoint.html)
 
 Cancel Test Order [API Docs](https://developer.amazon.com/docs/dash/canceltestorder-endpoint.html)
+
+## Todos
+
+[ ] Convert to modules
+
+[ ] Document examples of the code
+
+[ ] Build out API integration example application
